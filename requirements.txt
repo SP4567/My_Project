@@ -1,5 +1,5 @@
 flask
 transformers
-pytorch
+torch
 datasets
 pydub

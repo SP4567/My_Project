@@ -12,7 +12,7 @@ app.config['OUTPUT_FOLDER'] = 'outputs'
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
 
-@app.route('/upload', methods=['POST'])
+@app.route('/upload', methods=['POST', 'GET'])
 def upload_file():
     if 'file' not in request.files:
         return redirect(request.url)

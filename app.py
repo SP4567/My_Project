@@ -39,9 +39,9 @@ def upload_file():
             sample_width=2,
             channels=1
         )
-        audio_segment.export(output_audio_path, format='wav')
+        audio_segment.export(output_audio_path, format='mp3')
 
-        return render_template('index.html', transcribed_text=text, audio_file='output.wav')
+        return render_template('index.html', transcribed_text=text, audio_file='output.mp3')
 
 # Whisper model setup
 whisper_model_id = "openai/whisper-large-v3"

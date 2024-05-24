@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Speech-to-Text Translator</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.4.0/dist/speech-commands.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/web-audio-api@0.3.3/dist/Web-Audio-API.min.js"></script>
+  <style>
+      body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+    }
+
+    h1, h2 {
+    color: #333;
+    }
+
+    form {
+    margin-bottom: 20px;
+    }
+
+    audio {
+    margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Speech-to-Text Translator</h1>
+  <button id="startButton">Start Recording</button>
+  <button id="stopButton" disabled>Stop Recording</button>
+  <p id="output"></p>
+  <script>
+    const startButton = document.getElementById('startButton');
+    const stopButton = document.getElementById('stopButton');
+    const outputElement = document.getElementById('output');
+    let recognition;
+    let isRecording = false;
+    async function startRecording() {
+      try {
+        recognition = await speechCommands.create('BROWSER_FFT');
+        await recognition.listen(async (result) => {
+          const translatedText = await translateText(result.scores);
+          outputElement.textContent = translatedText;
+          generateAudio(translatedText);
+        }, { includeSpectrogram: true, probabilityThreshold: 0.75 });
+
+        isRecording = true;
+        startButton.disabled = true;
+        stopButton.disabled = false;
+      } catch (error) {
+        console.error('Error starting recording:', error);
+      }
+    }
+    function stopRecording() {
+      recognition.stopListening();
+      isRecording = false;
+      startButton.disabled = false;
+      stopButton.disabled = true;
+    }
+    async function translateText(scores) {
+      // Implement your machine learning model for text translation here
+      // This is a placeholder, you need to replace it with your actual translation logic
+      const translatedText = 'Translated text: ' + scores.join(', ');
+      return translatedText;
+    }
+    function generateAudio(text) {
+      // Implement your audio generation logic here
+      // This is a placeholder, you need to replace it with your actual audio generation code
+      console.log('Generating audio for:', text);
+    }
+    startButton.addEventListener('click', startRecording);
+    stopButton.addEventListener('click', stopRecording);
+  </script>
+</body>
+</html>

@@ -12,35 +12,6 @@ app.config['OUTPUT_FOLDER'] = 'outputs'
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
 
-# Whisper model setup
-whisper_model_id = "openai/whisper-large-v3"
-whisper_model = AutoModelForSpeechSeq2Seq.from_pretrained(
-    whisper_model_id, torch_dtype=torch_dtype, low_cpu_mem_usage=True, use_safetensors=True
-)
-whisper_model.to(device)
-
-processor = AutoProcessor.from_pretrained(whisper_model_id)
-asr_pipeline = pipeline(
-    "automatic-speech-recognition",
-    model=whisper_model,
-    tokenizer=processor.tokenizer,
-    feature_extractor=processor.feature_extractor,
-    max_new_tokens=128,
-    chunk_length_s=30,
-    batch_size=16,
-    return_timestamps=True,
-    torch_dtype=torch_dtype,
-    device=device,
-)
-
-# MMS-TTS model setup
-tts_model = VitsModel.from_pretrained("facebook/mms-tts-eng")
-tts_tokenizer = AutoTokenizer.from_pretrained("facebook/mms-tts-eng")
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -72,6 +43,34 @@ def upload_file():
 
         return render_template('index.html', transcribed_text=text, audio_file='output.wav')
 
+# Whisper model setup
+whisper_model_id = "openai/whisper-large-v3"
+whisper_model = AutoModelForSpeechSeq2Seq.from_pretrained(
+    whisper_model_id, torch_dtype=torch_dtype, low_cpu_mem_usage=True, use_safetensors=True
+)
+whisper_model.to(device)
+
+processor = AutoProcessor.from_pretrained(whisper_model_id)
+asr_pipeline = pipeline(
+    "automatic-speech-recognition",
+    model=whisper_model,
+    tokenizer=processor.tokenizer,
+    feature_extractor=processor.feature_extractor,
+    max_new_tokens=128,
+    chunk_length_s=30,
+    batch_size=16,
+    return_timestamps=True,
+    torch_dtype=torch_dtype,
+    device=device,
+)
+
+# MMS-TTS model setup
+tts_model = VitsModel.from_pretrained("facebook/mms-tts-eng")
+tts_tokenizer = AutoTokenizer.from_pretrained("facebook/mms-tts-eng")
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):

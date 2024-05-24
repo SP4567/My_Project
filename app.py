@@ -32,7 +32,7 @@ def upload_file():
         with torch.no_grad():
             output = tts_model(**inputs).waveform
 
-        output_audio_path = os.path.join(app.config['OUTPUT_FOLDER'], 'output.wav')
+        output_audio_path = os.path.join(app.config['OUTPUT_FOLDER'], 'output.mp3')
         audio_segment = AudioSegment(
             output.numpy().astype('int16').tobytes(),
             frame_rate=tts_model.config.sampling_rate,
